@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed | FoodieHub{% endblock %}
+{% block content %}
+<div class="success-page">
+<div class="success-icon">✓</div>
+<h1>Order placed successfully!</h1>
+<p>Thank you for ordering with FoodieHub.</p>
+<div class="order-ticket">
+<p><strong>Order #{{ order['id'] }}</strong><span class="status">{{ order['status'] }}</span></p>
+<hr>
+<p>Delivery address: {{ order['address'] }}, {{ order['city'] }} - {{ order['pincode'] }}</p>
+{% if order['landmark'] %}<p>Landmark: {{ order['landmark'] }}</p>{% endif %}
+<p>Payment: {{ order['payment_method'] }}</p>
+<h2>Total: ₹{{ "%.0f"|format(order['total']) }}</h2>
+</div>
+<a class="btn" href="{{ url_for('orders') }}">Track My Orders</a>
+<a class="btn secondary" href="{{ url_for('menu') }}">Continue Shopping</a>
+</div>
+{% endblock %}

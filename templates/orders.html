@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}My Orders | FoodieHub{% endblock %}
+{% block content %}
+<section class="page-head"><h1>My Orders</h1><p>Track your FoodieHub orders.</p></section>
+{% for order in orders %}
+<div class="order-card">
+<div><strong>Order #{{ order['id'] }}</strong><small>{{ order['created_at'] }}</small></div>
+<span class="status">{{ order['status'] }}</span>
+<div><strong>₹{{ "%.0f"|format(order['total']) }}</strong><small>{{ order['address'] }}, {{ order['city'] }} - {{ order['pincode'] }}</small></div>
+</div>
+{% else %}
+<div class="empty"><h2>No orders yet</h2><a class="btn" href="{{ url_for('menu') }}">Start Ordering</a></div>
+{% endfor %}
+{% endblock %}

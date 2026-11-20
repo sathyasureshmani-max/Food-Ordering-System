@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Checkout | FoodieHub{% endblock %}
+{% block content %}
+<section class="page-head"><h1>Checkout</h1><p>Enter your delivery address and place your order.</p></section>
+<div class="checkout-layout">
+<form method="post" class="form-card" id="checkoutForm">
+<h2>Delivery details</h2>
+<label>House / Street Address *<textarea name="address" required placeholder="Flat/House No., Street, Area"></textarea></label>
+<label>Landmark<input name="landmark" placeholder="Near college, temple, mall..."></label>
+<div class="two">
+<label>City *<input name="city" required value="Chennai"></label>
+<label>Pincode *<input name="pincode" required pattern="\d{6}" maxlength="6" placeholder="600001"></label>
+</div>
+<div class="location-box">
+<div><strong>📍 Delivery location</strong><p id="locationStatus">You can allow browser location access to capture your current coordinates.</p></div>
+<button type="button" class="btn secondary" onclick="getLocation()">Use Current Location</button>
+</div>
+<input type="hidden" name="latitude" id="latitude">
+<input type="hidden" name="longitude" id="longitude">
+<label>Delivery instructions<textarea name="notes" placeholder="e.g. Please call when you arrive."></textarea></label>
+
+<h2>Payment</h2>
+<label class="radio"><input type="radio" name="payment_method" value="Cash on Delivery" checked> Cash on Delivery</label>
+<label class="radio disabled"><input type="radio" disabled> Online Payment (coming soon)</label>
+<button class="btn full" type="submit">Place Order · ₹{{ "%.0f"|format(total) }}</button>
+</form>
+
+<div class="summary">
+<h2>Your order</h2>
+{% for food, qty in items %}
+<p>{{ food['name'] }} × {{ qty }} <span>₹{{ "%.0f"|format(food['price'] * qty) }}</span></p>
+{% endfor %}
+<hr>
+<p>Subtotal <span>₹{{ "%.0f"|format(subtotal) }}</span></p>
+<p>Delivery <span>{{ "₹%.0f"|format(delivery_fee) if delivery_fee else "FREE" }}</span></p>
+<h3>Total <span>₹{{ "%.0f"|format(total) }}</span></h3>
+</div>
+</div>
+<script>
+function getLocation() {
+  const status = document.getElementById("locationStatus");
+  if (!navigator.geolocation) {
+    status.textContent = "Location is not supported by this browser.";
+    return;
+  }
+  status.textContent = "Requesting your location...";
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      document.getElementById("latitude").value = pos.coords.latitude.toFixed(6);
+      document.getElementById("longitude").value = pos.coords.longitude.toFixed(6);
+      status.textContent = "Location captured successfully. Coordinates saved with this order.";
+    },
+    function() {
+      status.textContent = "Location permission was not granted. You can still enter the address manually.";
+    }
+  );
+}
+</script>
+{% endblock %}

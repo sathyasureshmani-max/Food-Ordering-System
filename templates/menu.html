@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Menu | FoodieHub{% endblock %}
+{% block content %}
+<section class="page-head">
+<h1>Our Menu</h1>
+<p>Choose your favourites and add them to your cart.</p>
+</section>
+<div class="filters">
+<form method="get" class="search">
+<input name="search" value="{{ search }}" placeholder="Search pizza, biryani, burger...">
+<button class="btn small">Search</button>
+</form>
+<div class="chips">
+<a class="{{ 'active' if not selected_category else '' }}" href="{{ url_for('menu') }}">All</a>
+{% for c in categories %}
+<a class="{{ 'active' if selected_category == c['name'] else '' }}" href="{{ url_for('menu', category=c['name']) }}">{{ c['name'] }}</a>
+{% endfor %}
+</div>
+</div>
+<div class="grid">
+{% for food in foods %}
+<article class="food-card">
+<div class="food-img">{{ food['image'] }}</div>
+<div class="food-body">
+<span class="tag">{{ food['category'] }}</span>
+<h3>{{ food['name'] }}</h3>
+<p>{{ food['description'] }}</p>
+<div class="food-bottom"><strong>₹{{ "%.0f"|format(food['price']) }}</strong>
+<form method="post" action="{{ url_for('add_to_cart', food_id=food['id']) }}"><button class="btn small">Add to cart</button></form>
+</div>
+</div>
+</article>
+{% else %}
+<p>No matching food items found.</p>
+{% endfor %}
+</div>
+{% endblock %}

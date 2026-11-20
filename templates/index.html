@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}FoodieHub | Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">FAST • FRESH • LOCAL</p>
+    <h1>Delicious food,<br><span>delivered to you.</span></h1>
+    <p>Browse restaurants-style food categories, build your cart and place a real order with delivery details.</p>
+    <a class="btn" href="{{ url_for('menu') }}">Explore Menu →</a>
+  </div>
+  <div class="hero-card">🍕<br><small>Hot & fresh</small></div>
+</section>
+
+<section class="section">
+<h2>Popular categories</h2>
+<div class="chips">
+{% for c in categories %}
+<a href="{{ url_for('menu', category=c['name']) }}">{{ c['name'] }}</a>
+{% endfor %}
+</div>
+</section>
+
+<section class="section">
+<div class="section-head"><h2>Customer favourites</h2><a href="{{ url_for('menu') }}">View all →</a></div>
+<div class="grid">
+{% for food in featured %}
+<article class="food-card">
+  <div class="food-img">{{ food['image'] }}</div>
+  <div class="food-body">
+    <span class="tag">{{ food['category'] }}</span>
+    <h3>{{ food['name'] }}</h3>
+    <p>{{ food['description'] }}</p>
+    <div class="food-bottom"><strong>₹{{ "%.0f"|format(food['price']) }}</strong>
+      <form method="post" action="{{ url_for('add_to_cart', food_id=food['id']) }}">
+        <button class="btn small" type="submit">Add</button>
+      </form>
+    </div>
+  </div>
+</article>
+{% endfor %}
+</div>
+</section>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard | FoodieHub{% endblock %}
+{% block content %}
+<section class="page-head"><h1>Admin Dashboard</h1><p>Manage the FoodieHub ordering system.</p></section>
+<div class="stats">
+<div><strong>{{ stats.users }}</strong><span>Customers</span></div>
+<div><strong>{{ stats.foods }}</strong><span>Available foods</span></div>
+<div><strong>{{ stats.orders }}</strong><span>Total orders</span></div>
+<div><strong>₹{{ "%.0f"|format(stats.revenue) }}</strong><span>Revenue</span></div>
+</div>
+<div class="section-head"><h2>Recent orders</h2><a class="btn small" href="{{ url_for('admin_foods') }}">Manage Foods</a></div>
+<div class="admin-table">
+{% for order in recent %}
+<div class="admin-row">
+<div><strong>#{{ order['id'] }} · {{ order['customer'] }}</strong><small>{{ order['email'] }} · {{ order['created_at'] }}</small></div>
+<div><strong>₹{{ "%.0f"|format(order['total']) }}</strong><small>{{ order['address'] }}, {{ order['city'] }} - {{ order['pincode'] }}</small></div>
+<form method="post" action="{{ url_for('update_order_status', order_id=order['id']) }}">
+<select name="status">
+{% for s in ["Placed","Preparing","Out for Delivery","Delivered","Cancelled"] %}
+<option {{ "selected" if order['status']==s else "" }}>{{ s }}</option>
+{% endfor %}
+</select>
+<button class="btn small">Update</button>
+</form>
+</div>
+{% else %}<p>No orders yet.</p>{% endfor %}
+</div>
+{% endblock %}

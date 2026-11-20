@@ -7,8 +7,24 @@
 </section>
 <div class="filters">
 <form method="get" class="search">
-<input name="search" value="{{ search }}" placeholder="Search pizza, biryani, burger...">
-<button class="btn small">Search</button>
+    <input name="search" value="{{ search }}"
+           placeholder="Search pizza, biryani, burger...">
+
+    <select name="sort">
+        <option value="default" {% if sort == 'default' %}selected{% endif %}>
+            Default
+        </option>
+
+        <option value="low" {% if sort == 'low' %}selected{% endif %}>
+            Price: Low to High
+        </option>
+
+        <option value="high" {% if sort == 'high' %}selected{% endif %}>
+            Price: High to Low
+        </option>
+    </select>
+
+    <button class="btn small">Apply</button>
 </form>
 <div class="chips">
 <a class="{{ 'active' if not selected_category else '' }}" href="{{ url_for('menu') }}">All</a>

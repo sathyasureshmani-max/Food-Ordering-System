@@ -218,27 +218,53 @@ def logout():
     flash("You have been logged out.", "success")
     return redirect(url_for("home"))
 
+
 @app.route("/menu")
 def menu():
     category = request.args.get("category", "").strip()
     search = request.args.get("search", "").strip()
+    sort = request.args.get("sort", "default")
+
     conn = get_db()
-    categories = conn.execute("SELECT * FROM categories ORDER BY name").fetchall()
+
+    categories = conn.execute(
+        "SELECT * FROM categories ORDER BY name"
+    ).fetchall()
+
     query = """SELECT f.*, c.name category FROM foods f
                JOIN categories c ON c.id=f.category_id
                WHERE f.is_available=1"""
+
     params = []
+
     if category:
         query += " AND c.name=?"
         params.append(category)
+
     if search:
         query += " AND (f.name LIKE ? OR f.description LIKE ?)"
         params.extend([f"%{search}%", f"%{search}%"])
-    query += " ORDER BY f.id DESC"
+
+    sort_options = {
+        "low": "f.price ASC",
+        "high": "f.price DESC",
+        "default": "f.id DESC"
+    }
+
+    order_by = sort_options.get(sort, "f.id DESC")
+    query += " ORDER BY " + order_by
+
     foods = conn.execute(query, params).fetchall()
     conn.close()
-    return render_template("menu.html", foods=foods, categories=categories,
-                           selected_category=category, search=search)
+
+    return render_template(
+        "menu.html",
+        foods=foods,
+        categories=categories,
+        selected_category=category,
+        search=search,
+        sort=sort
+    )
 
 @app.post("/cart/add/<int:food_id>")
 @login_required
